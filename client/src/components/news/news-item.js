@@ -14,10 +14,9 @@ export default class NewsItem extends Component {
         return (
             <>
                 <div>
-                    <h1>{id}</h1>
                     <h3>{title}</h3>
                     <p>{caption}</p>
-                    <img src={RESOURCE_URL + imagePath}/>
+                    <img STYLE={"width: 200px"} src={RESOURCE_URL + imagePath}/>
                     <Link to={`/news/${id}`}>details..</Link>
                     <br/>
                 </div>

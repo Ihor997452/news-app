@@ -1,6 +1,5 @@
 import {Component} from "react";
-import NewsTextComponent from "./news-text-component";
-import NewsImageComponent from "./news-image-component";
+import {RESOURCE_URL} from "../../Constants";
 
 export default class NewsComponent extends Component {
     constructor(props) {
@@ -10,11 +9,29 @@ export default class NewsComponent extends Component {
     }
 
     render() {
-        if (this.item.text) {
-            return <NewsTextComponent text={this.item.text}/>
+        let style = {}
+        if (this.item.cssStyle === null) {
+             style = {}
+        } else {
+            style = JSON.parse(this.item.cssStyle)
         }
-        if (this.item.imagePath) {
-            return <NewsImageComponent imagePath={this.item.imagePath}/>
+        style["position"] = "relative"
+
+        if (this.item.resourcePath) {
+            return (
+                <>
+                    <img alt={this.item.text}
+                         src={RESOURCE_URL + this.item.resourcePath}
+                         style={style}/>
+                    <br/>
+                </>
+            )
+        } else if (this.item.text) {
+            return (
+                <>
+                    <p style={style}>{this.item.text}</p>
+                </>
+            )
         }
     }
 }

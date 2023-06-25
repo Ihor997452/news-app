@@ -7,6 +7,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,10 +15,10 @@ import java.nio.file.Paths;
 import java.util.Date;
 
 @Service
-public class ImageService {
+public class ResourceService {
     private final Path storageLocation;
 
-    public ImageService(FileProperty property) {
+    public ResourceService(FileProperty property) {
         this.storageLocation = Paths.get(property.getUploadDir()).toAbsolutePath().normalize();
 
         try {
@@ -37,7 +38,6 @@ public class ImageService {
         return fileName;
     }
 
-
     @SneakyThrows
     public Resource get(String fileName) {
         try {
@@ -51,5 +51,11 @@ public class ImageService {
         } catch (MalformedURLException ex) {
             throw new Exception("File not found " + fileName, ex);
         }
+    }
+
+    @SneakyThrows
+    public void delete(String fileName) {
+        Path target = this.storageLocation.resolve(fileName);
+        Files.delete(target);
     }
 }

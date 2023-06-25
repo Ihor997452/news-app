@@ -1,4 +1,4 @@
-package com.example.newandsheit.model.component;
+package com.example.newandsheit.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,10 +9,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 
-@Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-public class Component {
+@MappedSuperclass
+public class JpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Integer id;
 }

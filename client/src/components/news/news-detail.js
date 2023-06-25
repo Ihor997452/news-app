@@ -36,7 +36,6 @@ export default class NewsDetail extends Component {
                             <img src={RESOURCE_URL + newsItem.imagePath}/>
                         </div>
 
-
                         {newsItem.components?.map(item => (
                             <NewsComponent item={item}/>
                             ))

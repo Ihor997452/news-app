@@ -1,9 +1,9 @@
 import {Component} from "react";
-import ImageComponentForm from "../image-component-form/image-component-form";
 import NewsService from "../../../service/news-service/news-service";
 import NewsItem from "../../news/news-item";
-import TextComponentForm from "../text-component-form/text-component-form";
-import {RESOURCE_URL} from "../../../Constants";
+import ComponentForm from "../component-form/component-form";
+import NewsComponent from "../../news/news-component";
+import ComponentPreview from "../preview/component-preview";
 
 export default class NewsItemForm extends Component {
     constructor(props) {
@@ -13,7 +13,8 @@ export default class NewsItemForm extends Component {
 
         this.state = {
             image: null,
-            newsItem: new NewsItem(),
+            newsItem: new NewsItem(this.props.match.params.id),
+            counter: 0,
             components: []
         }
     }
@@ -27,32 +28,19 @@ export default class NewsItemForm extends Component {
         });
     }
 
-    omitKeys(obj, keys) {
-        let dup = {};
-        for (let key in obj) {
-            if (keys.indexOf(key) === -1) {
-                dup[key] = obj[key];
-            }
-        }
-        return dup;
-    }
-
     handleSubmit(e) {
         e.preventDefault();
         const { newsItem, image, components } = this.state;
 
-        for (let i = 0; i < components.length; i++) {
-            components[i] = this.omitKeys(components[i], ["text", "imagePath"]);
+        const body = {
+            "title": newsItem.title,
+            "caption": newsItem.caption,
+            "componentsJson": JSON.stringify(components ),
+            "multipartFile": image
         }
 
-        newsItem["components"] = components;
-        const json = JSON.stringify(this.omitKeys(newsItem, ["props", "refs", "updater", "isReactComponent"]));
-
-        console.log(json)
-
-        const body = {
-            "json": json,
-            "multipartFile": image
+        if (newsItem.id) {
+            body["id"] = newsItem.id
         }
 
         this.newsService.service.save(body, { headers: {'content-type': 'multipart/form-data'}});
@@ -74,10 +62,12 @@ export default class NewsItemForm extends Component {
             newsItem[name] = value;
             this.setState({newsItem: newsItem});
         }
+
+        this.setState({ counter: this.state.counter + 1 })
     }
 
     render() {
-        const { newsItem, image, components } = this.state;
+        const { newsItem, components } = this.state;
         const { title, caption } = newsItem;
 
         return (
@@ -93,19 +83,10 @@ export default class NewsItemForm extends Component {
                 <br/>
 
                 {components.map(component => {
-                    if (component.text) {
-                        return <h1>{component.text}</h1>
-                    }
-
-                    if (component.imagePath) {
-                        return <img src={RESOURCE_URL + component.imagePath}/>
-                    }
+                    return <NewsComponent item={component}/>
                 })}
-
-                <ImageComponentForm onSubmit={(component) => this.handleComponentSubmit(component)}/>
-                <TextComponentForm onSubmit={(component) => this.handleComponentSubmit(component)}/>
-
                 <br/>
+                <ComponentForm onSubmit={(component) => this.handleComponentSubmit(component)}/>
                 <br/>
                 <button onClick={e => this.handleSubmit(e)}>Save</button>
             </>
